@@ -22,7 +22,6 @@ PDFize is a simple web application that allows users to convert Word documents (
 - Express
 - Multer (for file uploads)
 - docx-pdf (for converting DOCX to PDF)
-- Cors (for handling cross-origin requests)
 
 ## Getting Started
 
@@ -60,7 +59,7 @@ PDFize is a simple web application that allows users to convert Word documents (
 
    ```
    cd ../client
-   npm start
+   npm run dev
    ```
 
 ## Contributors
