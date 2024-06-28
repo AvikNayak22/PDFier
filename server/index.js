@@ -3,20 +3,13 @@ const multer = require("multer");
 const mammoth = require("mammoth");
 const PuppeteerHTMLPDF = require("puppeteer-html-pdf");
 const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 
 const app = express();
 const port = 3000;
 
 const htmlPDF = new PuppeteerHTMLPDF();
-htmlPDF.setOptions({
-  format: "A4",
-  margin: {
-    left: "25px",
-    right: "25px",
-    top: "20px",
-  },
-});
 
 app.use(cors());
 
@@ -43,9 +36,36 @@ app.post(
 
       // Read the DOCX file
       const docxPath = req.file.path;
-      const content = await mammoth.convertToHtml({ path: docxPath });
+      let content;
+      try {
+        content = await mammoth.convertToHtml({ path: docxPath });
+      } catch (error) {
+        console.error("Error converting DOCX to HTML:", error);
+        return res.status(500).json({
+          message: "Failed to convert DOCX to HTML",
+        });
+      }
 
-      const pdfBuffer = await htmlPDF.create(content.value);
+      const file = { content: content.value };
+
+      htmlPDF.setOptions({
+        format: "A4",
+        margin: {
+          left: "25px",
+          right: "25px",
+          top: "20px",
+        },
+      });
+
+      let pdfBuffer;
+      try {
+        pdfBuffer = await htmlPDF.create(file);
+      } catch (error) {
+        console.error("Error creating PDF:", error);
+        return res.status(500).json({
+          message: "Failed to create PDF",
+        });
+      }
 
       //defining output file path
       let outputPath = path.join(
@@ -54,10 +74,25 @@ app.post(
         `${req.file.originalname}.pdf`
       );
 
-      await htmlPDF.writeFile(pdfBuffer, outputPath);
+      try {
+        await htmlPDF.writeFile(pdfBuffer, outputPath);
+      } catch (error) {
+        console.error("Error writing PDF file:", error);
+        return res.status(500).json({
+          message: "Failed to write PDF file",
+        });
+      }
 
       res.download(outputPath, () => {
         console.log("File downloaded");
+
+        // Clean up files after download
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error("Failed to delete uploaded file:", err);
+        });
+        fs.unlink(outputPath, (err) => {
+          if (err) console.error("Failed to delete output PDF:", err);
+        });
       });
     } catch (error) {
       console.log(error);

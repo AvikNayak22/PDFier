@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { saveAs } from "file-saver";
 import { Upload } from "lucide-react";
 
 const Home = () => {
@@ -31,16 +32,8 @@ const Home = () => {
         }
       );
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute(
-        "download",
-        selectedFile.name.replace(/\.[^/.]+$/, "") + ".pdf"
-      );
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
+      const blob = new Blob([response.data]);
+      saveAs(blob, selectedFile.name.replace(/\.[^/.]+$/, "") + ".pdf");
 
       setSelectedFile(null);
       setDownloadError("");
