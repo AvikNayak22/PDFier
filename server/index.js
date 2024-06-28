@@ -1,11 +1,22 @@
 const express = require("express");
 const multer = require("multer");
-const docxToPDF = require("docx-pdf");
+const mammoth = require("mammoth");
+const PuppeteerHTMLPDF = require("puppeteer-html-pdf");
 const path = require("path");
 const cors = require("cors");
 
 const app = express();
 const port = 3000;
+
+const htmlPDF = new PuppeteerHTMLPDF();
+htmlPDF.setOptions({
+  format: "A4",
+  margin: {
+    left: "25px",
+    right: "25px",
+    top: "20px",
+  },
+});
 
 app.use(cors());
 
@@ -21,37 +32,41 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post("/convertFile", upload.single("file"), function (req, res, next) {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    //defining output file path
-    let outputPath = path.join(
-      __dirname,
-      "files",
-      `${req.file.originalname}.pdf`
-    );
-    docxToPDF(req.file.path, outputPath, function (err, result) {
-      if (err) {
-        console.log(err);
-        return res
-          .status(500)
-          .json({ message: "Error converting docx to pdf" });
+app.post(
+  "/convertFile",
+  upload.single("file"),
+  async function (req, res, next) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
       }
+
+      // Read the DOCX file
+      const docxPath = req.file.path;
+      const content = await mammoth.convertToHtml({ path: docxPath });
+
+      const pdfBuffer = await htmlPDF.create(content.value);
+
+      //defining output file path
+      let outputPath = path.join(
+        __dirname,
+        "files",
+        `${req.file.originalname}.pdf`
+      );
+
+      await htmlPDF.writeFile(pdfBuffer, outputPath);
 
       res.download(outputPath, () => {
         console.log("File downloaded");
       });
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
   }
-});
+);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
