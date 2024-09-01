@@ -1,6 +1,6 @@
-# PDFize
+# PDFier
 
-PDFize is a simple web application that allows users to convert Word documents (DOC/DOCX) to PDF format. The application consists of a frontend built with React and a backend using Express and Multer for file handling.
+PDFier is a simple web application that converts Word documents (DOC/DOCX) to PDF format. The application consists of a frontend built with React and a backend using Express and Multer for file handling.
 
 ## Features
 
