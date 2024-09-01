@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
-import { Upload } from "lucide-react";
 
 const Home = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -48,54 +47,55 @@ const Home = () => {
   };
 
   return (
-    <>
-      <div className="max-w-screen-2xl mx-auto container px-6 py-3 md:px-40">
-        <div className="flex h-[calc(100vh-88px)] items-center justify-center">
-          <div className=" bg-gray-100 px-4 py-2 md:px-8 md:py-6 rounded-lg shadow-lg">
-            <h1 className="text-4xl font-bold text-center  mb-4">
-              Convert Word to PDF Online
-            </h1>
-            <p className="text-sm text-center text-gray-400 mb-5">
-              Easily convert Word documents to PDF format online, without having
-              to install any software.
-            </p>
-            <div className="flex flex-col items-center gap-y-4">
-              <input
-                type="file"
-                accept=".doc,.docx"
-                onChange={handleFileChange}
-                className="hidden"
-                id="FileInput"
-              />
-              <label
-                htmlFor="FileInput"
-                className="w-full flex gap-2 items-center justify-center px-6 py-4 bg-blue-800 text-white rounded-lg shadow-lg cursor-pointer border border-blue-800 hover:bg-blue-900 duration-300"
-              >
-                <Upload size={30} />
-                <span className="text-xl sm:text-2xl mr-2">
-                  {selectedFile ? selectedFile.name : "Upload File"}
-                </span>
-              </label>
-              <button
-                onClick={handleSubmit}
-                disabled={!selectedFile}
-                className="text-white bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:pointer-events-none duration-300 font-bold px-6 py-3 rounded-lg mt-3"
-              >
-                Convert
-              </button>
-              {convert && (
-                <div className="text-green-500 text-center mt-3">{convert}</div>
-              )}
-              {downloadError && (
-                <div className="text-red-500 text-center mt-3">
-                  {downloadError}
-                </div>
-              )}
-            </div>
+    <main className="container mx-auto p-6 md:p-12">
+      <div className="flex flex-col md:flex-row gap-8 items-center justify-center h-[calc(100vh-177px)]">
+        <div className="w-full md:w-1/2 bg-white p-8 rounded-lg shadow-lg border space-y-6">
+          <h1 className="text-3xl md:text-4xl font-semibold text-gray-800 text-center">
+            Word to PDF Converter
+          </h1>
+          <p className="text-center text-gray-600">
+            Convert your Word documents to PDF format quickly and easily without
+            any software installation.
+          </p>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <input
+              type="file"
+              accept=".doc,.docx"
+              onChange={handleFileChange}
+              className="hidden"
+              id="file-upload"
+            />
+            <label
+              htmlFor="file-upload"
+              className="flex-1 py-3 px-6 bg-indigo-600 text-white rounded-lg cursor-pointer hover:bg-indigo-700 transition duration-300 text-center"
+            >
+              {selectedFile ? selectedFile.name : "Select a Word File"}
+            </label>
+            <button
+              onClick={handleSubmit}
+              disabled={!selectedFile}
+              className={`flex-1 py-3 px-6 rounded-lg font-bold transition duration-300 ${
+                selectedFile
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              Convert Now
+            </button>
           </div>
+          {convert && (
+            <div className="mt-4 text-center text-green-600 font-medium">
+              {convert}
+            </div>
+          )}
+          {downloadError && (
+            <div className="mt-4 text-center text-red-600 font-medium">
+              {downloadError}
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </main>
   );
 };
 

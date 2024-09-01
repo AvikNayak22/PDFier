@@ -1,22 +1,18 @@
-import React from "react";
-
 const Footer = () => {
   return (
-    <>
-      <div className="flex items-center h-16 justify-center bg-slate-200">
-        <hr className="border-[1px]" />
-        <h1 className="text-center py-3 text-sm ">
-          Made with ❤️ by{" "}
-          <a
-            className="text-bold underline text-blue-500"
-            href="https://github.com/AvikNayak22"
-          >
-            AvikNayak22
-          </a>
-          .
-        </h1>
-      </div>
-    </>
+    <footer className="flex items-center justify-center h-20 bg-slate-200">
+      <h1 className="text-md text-gray-500 sm:text-center dark:text-gray-400">
+        &copy; {new Date().getFullYear()}
+        <a
+          href="https://github.com/AvikNayak22/PDFier"
+          target="_blank"
+          className="hover:underline"
+        >
+          PDFier™
+        </a>
+        . All Rights Reserved.
+      </h1>
+    </footer>
   );
 };
 
